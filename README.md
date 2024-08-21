@@ -21,7 +21,9 @@
 
 - [Inserindo OAuth2 e JWT em projeto](#inserindo-oauth2-e-jwt-em-um-projeto)
   - [Modelo de dados User-Role](#modelo-de-dados-user-role)
-  - [Adicionando Spring Security ao projeto]()
+  - [Adicionando Spring Security ao projeto](#adicionando-spring-security-ao-projeto)
+  - [BCrypt password enconder](#bcrypt-password-enconder)
+  - [CheckList Spring Security PT1](#implementando-checklist-spring-security-pt1)
 <hr>
 
 
@@ -282,3 +284,31 @@ public class DemoApplication implements CommandLineRunner {
 Código hash gerado para substituir a senha:
 
 ![img_10.png](img_10.png)
+
+### Implementando checkList Spring Security PT1
+
+O Spring Security é um sub framework responsável por fazer a parte de segurança/autenticar usuários.
+
+Para que ele possa fazer isso, para que o nosso projeto tenha o mecanismo de identificar os usuários e os seus perfis 
+usando o framework, precisamos implementar algumas interfaces para que o Security as use, veja:
+
+UserDetails - Tem as informações do usuário. Repare, nós possuímos o ``getAuthorities`` que, na verdade, é uma coleção
+da interface GrantedAuthority do lado.
+
+GrantedAuthority - É onde as roles do usuário ficarão guardadas.
+
+UserDetailsService - Passaremos um nome de usuário e será retornado um UserDetails.
+
+E uma exceção para caso o usuário não seja encontrado.
+
+![img_11.png](img_11.png)
+
+#### Entidades que herdarão as interfaces
+
+Os métodos serão implementados automaticamente.
+
+Role -> GrantedAuthority
+
+User -> UserDetails (lembrar de colocar os retornos nos métodos, se o email é o UserName, colocar o retorno etc)
+
+UserService -> UserDetailsService
