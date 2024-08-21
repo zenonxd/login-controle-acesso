@@ -171,3 +171,31 @@ de verificar o estado do servidor.
 
 
 3. Segurança: Pode ser assinado (para garantir a integridade dos dados) e criptografado (para garantir a privacidade).
+
+## Inserindo OAuth2 e JWT em um projeto
+
+[Repositório de referência](https://github.com/devsuperior/spring-boot-oauth2-jwt-demo)
+
+❗Lembrar de configurar o enviroment do Postman importando a collection e enviroment. (Trocar porta 8081 do ashost 
+para 8080)
+
+### Modelo de dados User-Role
+
+Para implementarmos a segurança na aplicação, juntamente com controle de acesso por perfis de usuário, precisamos
+implementar os modelos de dados para armazenar esses perfis.
+
+**UML** - Relação Many to Many
+
+![img_9.png](img_9.png)
+
+Email será usado para login.
+
+A tabela Role é o **perfil do usuário** (cliente, admin, operador, etc...).
+
+1. Criar entidade Role;
+2. Construtor, getters and setters e equals&hashcode com authority;
+3. Implementar anotações Spring e fazer a relação ManyToMany com User;
+4. Na classe User, criar um método void "addRole";
+5. Criar um método hasRole, passando uma Role para retornar true ou false;
+   - Para isso, só fazer um for na Lista Role para verificar igualdade.
+7. 
