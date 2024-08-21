@@ -19,7 +19,9 @@
 
 <hr>
 
-- []()
+- [Inserindo OAuth2 e JWT em projeto](#inserindo-oauth2-e-jwt-em-um-projeto)
+  - [Modelo de dados User-Role](#modelo-de-dados-user-role)
+  - [Adicionando Spring Security ao projeto]()
 <hr>
 
 
@@ -198,4 +200,85 @@ A tabela Role é o **perfil do usuário** (cliente, admin, operador, etc...).
 4. Na classe User, criar um método void "addRole";
 5. Criar um método hasRole, passando uma Role para retornar true ou false;
    - Para isso, só fazer um for na Lista Role para verificar igualdade.
-7. 
+
+### Adicionando Spring Security ao projeto
+
+Maven Spring Security
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-test</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+Se adicionarmos o Spring Security e rodar a aplicação, os nossos endpoints estarão bloqueados.
+
+Para liberá-los provisioriamente, criaremos uma classe SecurityConfig no pacote config:
+
+```java
+@Configuration
+public class SecurityConfig {
+
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        
+        //acessando o objeto HttpSecurity e desabilitando a proteção contra ataques do tipo csrf
+        //(quando gravamos dados na sessao).
+		http.csrf(csrf -> csrf.disable());
+        
+        //autorizando qualquer tipo de request http
+		http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+		return http.build();
+	}
+}
+```
+
+### BCrypt password enconder
+
+Aqui codificaremos a nossa senha, pois não é bacana a gente colocar no banco a senha do usuário direto. A ideia é
+codificá-la para um codigo hash, gerado a partir da senha.
+
+Na classe Config criada anteriormente, podemos definir componentes na forma de métodos. 
+
+1. Criaremos um componente chamado passwordEncoder, usando o Bcrypt e @Bean;
+2. Assim que dermos o ``return``, esse objeto virará um componente que pode ser injetado em outros lugares;
+3. Para testar, injetaremos ele no nosso Application.
+
+
+```java
+@Configuration
+public class SecurityConfig {
+    @Bean
+    public PasswordEncoder getPasswordEncoder() {
+        return new BcryptPasswordEncoder();
+    }
+}
+```
+
+```java
+@SpringBootApplication
+public class DemoApplication implements CommandLineRunner {
+    @Autowired
+    private PasswordEnconder passwordEnconder;
+    
+    @Override
+    public void run(String... args) throws Exception {
+        //para gerar o codigo hash 
+        System.out.println(passwordEnconder.enconde("123456"));
+        
+        //para comparar o codigo hash gerado com a senha
+        boolean result = passwordEnconder.matches("123456", "insira hash aqui")
+    }
+}
+```
+
+Código hash gerado para substituir a senha:
+
+![img_10.png](img_10.png)
