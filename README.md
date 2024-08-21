@@ -10,7 +10,12 @@
 - [Login, credenciais e JWT](#login-credenciais-e-jwt)
   - [Aplicativo](#aplicativo)
   - [Usuário](#usuário)
+
+
 - [JWT](#jwt)
+  - [Estrutura](#estrutura)
+  - [Como funciona](#como-funciona)
+  - [Vantagens](#vantagens)
 
 <hr>
 
@@ -39,7 +44,7 @@ Como é algo específico do curso, não colocarei o link, mas você pode adquiri
 
 Em algum momento o usuário vai fazer o seu login, ou seja, irá informar as suas credenciais (email ou id/senha).
 
-Depois disso, o sistema retorno para ou usuário um token de acesso.
+Depois disso, o sistema retorna para o usuário um token de acesso.
 
 ![img_1.png](img_1.png)
 
@@ -115,5 +120,54 @@ JWT, um formato padrão das indústrias, veja abaixo:
 
 ## JWT
 
+[Jwt.io](https://jwt.io)
+
 [Introdução a JWT - Nélio Alves](https://www.youtube.com/watch?v=n1z9lx4ymPM)
 
+JWTs são amplamente utilizados em aplicações web modernas, especialmente para autenticação e controle de acesso em APIs.
+
+Ele tem um padrão aberto (RFC 7519) que define um método compacto e autônomo para transmitir informações seguras entre 
+partes como um objeto JSON. Esses tokens são frequentemente usados p**ara autenticação e troca de informações em 
+sistemas distribuídos.**
+
+### Estrutura
+
+O JWT é dividido em 3 partes:
+
+![img_8.png](img_8.png)
+
+1. Cabeçalho (vermelho) (Header): Geralmente indica o tipo de token (JWT) e o algoritmo de assinatura usado 
+(como HMAC SHA256 ou RSA).
+
+
+3. Corpo (roxo) (Payload): Contém as declarações (claims), que são as informações que você quer transmitir. Existem 
+três tipos de declarações: 
+   1. registradas (como iss para emissor, exp para expiração);
+   2. públicas;
+   3. privadas.
+   
+
+4. Assinatura (azul) (Signature): Usada para verificar se o emissor do token é quem diz ser e se o token não foi 
+alterado. É criada combinando o cabeçalho e o corpo do token com uma chave secreta ou uma chave privada.
+
+### Como funciona
+
+1. O servidor gera um JWT após a autenticação do usuário e o envia ao cliente.
+
+
+2. O cliente armazena o token (geralmente em armazenamento local ou cookies) e o envia com cada solicitação subsequente.
+
+
+3. O servidor pode verificar a validade do token e, se válido, autoriza o acesso com base nas informações contidas 
+no payload.
+
+### Vantagens
+
+1. Compacto: JWTs são compactos, o que facilita a transmissão em URLs, parâmetros de consulta ou headers HTTP.
+
+
+2. Autônomo: Contém todas as informações necessárias para a verificação de autenticidade, reduzindo a necessidade 
+de verificar o estado do servidor.
+
+
+3. Segurança: Pode ser assinado (para garantir a integridade dos dados) e criptografado (para garantir a privacidade).
