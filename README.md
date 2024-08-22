@@ -21,9 +21,14 @@
 
 - [Inserindo OAuth2 e JWT em projeto](#inserindo-oauth2-e-jwt-em-um-projeto)
   - [Modelo de dados User-Role](#modelo-de-dados-user-role)
-  - [Adicionando Spring Security ao projeto](#adicionando-spring-security-ao-projeto)
-  - [BCrypt password enconder](#bcrypt-password-enconder)
-  - [CheckList Spring Security PT1](#implementando-checklist-spring-security-pt1)
+  
+- [Adicionando Spring Security ao projeto](#adicionando-spring-security-ao-projeto)
+  - [Liberando endpoints Spring Security](#liberando-endpoint-spring-security)
+  - [Liberando H2 Spring Security](#liberando-h2-spring-security)
+
+
+- [BCrypt password enconder](#bcrypt-password-enconder)
+- [CheckList Spring Security PT1](#implementando-checklist-spring-security-pt1)
 <hr>
 
 
@@ -220,6 +225,8 @@ Maven Spring Security
 </dependency>
 ```
 
+#### Liberando endpoint Spring Security
+
 Se adicionarmos o Spring Security e rodar a aplicação, os nossos endpoints estarão bloqueados.
 
 Para liberá-los provisioriamente, criaremos uma classe SecurityConfig no pacote config:
@@ -241,6 +248,24 @@ public class SecurityConfig {
 	}
 }
 ```
+
+#### Liberando H2 Spring Security
+
+```java
+@Configuration
+public class SecurityConfig {
+    @Bean
+    @Profile("test")
+    @Order(1)
+    public SecurityFilterChain h2SecurityFilterChain(HttpSecurity http) throws Exception {
+
+        http.securityMatcher(PathRequest.toH2Console()).csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
+        return http.build();
+    }
+}
+```
+
 
 ### BCrypt password enconder
 
@@ -289,7 +314,7 @@ Código hash gerado para substituir a senha:
 
 O Spring Security é um sub framework responsável por fazer a parte de segurança/autenticar usuários.
 
-Para que ele possa fazer isso, para que o nosso projeto tenha o mecanismo de identificar os usuários e os seus perfis 
+Para que ele possa fazer isso e o nosso projeto tenha o mecanismo de identificar os usuários e os seus perfis 
 usando o framework, precisamos implementar algumas interfaces para que o Security as use, veja:
 
 UserDetails - Tem as informações do usuário. Repare, nós possuímos o ``getAuthorities`` que, na verdade, é uma coleção
@@ -307,8 +332,55 @@ E uma exceção para caso o usuário não seja encontrado.
 
 Os métodos serão implementados automaticamente.
 
-Role -> GrantedAuthority
+Role ⇛ GrantedAuthority
 
-User -> UserDetails (lembrar de colocar os retornos nos métodos, se o email é o UserName, colocar o retorno etc)
+User ⇛ UserDetails (lembrar de colocar os retornos nos métodos, se o email é o UserName, colocar o retorno etc)
 
-UserService -> UserDetailsService
+UserService ⇛ UserDetailsService
+
+Uma breve introdução.
+-
+
+O método do UserDetailsService é tentar encontrar um usuário por Username. Como nosso Username na verdade é o email,
+precisamos:
+
+1. Criar um UserRepository com o método "findByEmail". Como já sabemos, o Repository consegue realizar a busca em
+virtude do "by". Para que ele consiga também buscar as roles desse usuário, faremos uma consulta SQL raíz.
+
+Nesse ponto, nós já sabemos!
+- Criar uma UserDetailsProjection no pacote projections, com os atributos em get:
+```java
+public interface UserDetailsProjection {
+
+	String getUsername();
+	String getPassword();
+	Long getRoleId();
+	String getAuthority();
+}
+```
+
+- Fazer a consulta no UserRepository, usando o projection com o SQL
+
+```java
+@Query(nativeQuery = true, value = """
+			SELECT tb_user.email AS username, tb_user.password, tb_role.id AS roleId, tb_role.authority
+			FROM tb_user
+			INNER JOIN tb_user_role ON tb_user.id = tb_user_role.user_id
+			INNER JOIN tb_role ON tb_role.id = tb_user_role.role_id
+			WHERE tb_user.email = :email
+		""")
+List<UserDetailsProjection> searchUserAndRolesByEmail(String email);
+
+```
+
+2. Injetar esse Repository no UserService, e utilizá-lo dentro do método advindo da interface:
+
+![img_12.png](img_12.png)
+
+1. Criaremos uma lista do tipo projection e usamos o método do repository passando o username;
+2. Se ela estiver vazia, lançamos a exceção;
+3. Caso contrário, instanciaremos um User, setaremos o seu email e password;
+4. Para settar as roles, faremos um for:
+   - Para cada Projection dentro da lista result, entraremos no objeto user e utilizaremos o método addRole;
+   - Dentro dele, criaremos um new Role, passando o roleid e tipo de authority :)
+7. Retorna o user depois.
