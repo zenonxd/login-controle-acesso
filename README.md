@@ -446,3 +446,32 @@ No path acima, entra na pasta customgrant e pega os arquivos e joga no subpacote
 - [ ] Configurar CSRF, CORS
 - [ ] Configurar token
 - [ ] Liberar H2 Console no modo teste
+
+### Requisição de Login
+
+Aqui, enviaremos as credenciais do app e usuário e esperar de volta um token.
+
+1. Criaremos uma requisição no Postman do tipo POST;
+2. Seu caminho será http://localhost:8080/oauth2/token
+   - Esse /oauth2/token é disponibilizado pelo próprio Spring
+3. No cabeçalho "authorization", passaremos o client id e secret e o base64;
+   - Para encondar com o base64 no Postman seu Type será Basic Auth
+   
+![img_13.png](img_13.png)
+
+Os campos username e password foram tirados do codigo de application.properties, [veja](#valores-de-configuração-inserir-no-applicationproperties)
+
+A partir disso, se observarmos no header do postman, a query de Authorization ja terá feito ela, exatamente como na diz 
+na imagem:
+
+![img_14.png](img_14.png)
+
+![img_15.png](img_15.png)
+
+No body do Postman, não teremos um tipo JSON e sim x-www-form-urlencoded, colocaremos chave e valor, veja:
+
+![img_16.png](img_16.png)
+
+Ao rodar a requisição, será gerado o token de acesso:
+
+![img_17.png](img_17.png)
