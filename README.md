@@ -12,23 +12,30 @@
   - [Usuário](#usuário)
 
 
-- [JWT](#jwt)
+[JWT](#jwt)
+- 
   - [Estrutura](#estrutura)
   - [Como funciona](#como-funciona)
   - [Vantagens](#vantagens)
 
 <hr>
 
-- [Inserindo OAuth2 e JWT em projeto](#inserindo-oauth2-e-jwt-em-um-projeto)
+[Inserindo OAuth2 e JWT em projeto](#inserindo-oauth2-e-jwt-em-um-projeto)
+- 
   - [Modelo de dados User-Role](#modelo-de-dados-user-role)
-  
-- [Adicionando Spring Security ao projeto](#adicionando-spring-security-ao-projeto)
-  - [Liberando endpoints Spring Security](#liberando-endpoint-spring-security)
-  - [Liberando H2 Spring Security](#liberando-h2-spring-security)
+  - [Adicionando Spring Security ao projeto](#adicionando-spring-security-ao-projeto)
+    - [Liberando endpoints Spring Security](#liberando-endpoint-spring-security)
+    - [Liberando H2 Spring Security](#liberando-h2-spring-security)
+  - [BCrypt password enconder](#bcrypt-password-enconder)
+  - [CheckList Spring Security](#implementando-checklist-spring-security)
+<hr>
 
+[Checklist OAuth2 JWT password grant](#checklist-oauth2-jwt-password-grant-1)
+-
+- [Valores Config (inserir app.properties)](#valores-de-configuração-inserir-no-applicationproperties)
+- [Maven](#maven)
+- [Checklist - password grant](#checklist-oauth2-jwt-password-grant-2)
 
-- [BCrypt password enconder](#bcrypt-password-enconder)
-- [CheckList Spring Security PT1](#implementando-checklist-spring-security-pt1)
 <hr>
 
 
@@ -310,7 +317,7 @@ Código hash gerado para substituir a senha:
 
 ![img_10.png](img_10.png)
 
-### Implementando checkList Spring Security PT1
+### Implementando checkList Spring Security
 
 O Spring Security é um sub framework responsável por fazer a parte de segurança/autenticar usuários.
 
@@ -384,3 +391,58 @@ List<UserDetailsProjection> searchUserAndRolesByEmail(String email);
    - Para cada Projection dentro da lista result, entraremos no objeto user e utilizaremos o método addRole;
    - Dentro dele, criaremos um new Role, passando o roleid e tipo de authority :)
 7. Retorna o user depois.
+
+### Checklist OAuth2 JWT password grant
+
+#### Valores de configuração (inserir no application.properties)
+```
+security.client-id=${CLIENT_ID:myclientid}
+security.client-secret=${CLIENT_SECRET:myclientsecret}
+
+//duracao token 
+security.jwt.duration=${JWT_DURATION:86400}
+
+cors.origins=${CORS_ORIGINS:http://localhost:3000,http://localhost:5173}
+```
+
+#### Maven
+```xml
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-oauth2-authorization-server</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+</dependency>
+```
+
+#### Checklist OAuth2 JWT password grant
+
+Acessar [este](https://github.com/devsuperior/spring-boot-oauth2-jwt-demo) repositório.
+
+password grant ⇛ spring-boot 3-1-0 ⇛ entrar nas subpastas até achar a config e selecionar:
+```AuthorizationServerConfig.java``` e ```ResourceServerConfig.java```.
+
+1. Inserir na pasta de config do projeto, apagando o SecurityConfig, não será mais necessário.
+
+
+2. Criar um subpacote em config chamado "customgrant". Dentro dele, teremos classes auxiliares para configurar o password
+grant do OAuth2 (o token que pegamos passando as credenciais).
+
+No path acima, entra na pasta customgrant e pega os arquivos e joga no subpacote criado no nosso projeto.
+
+- [ ] Implementação customizada do password grant
+- [ ] Authorization server
+  - [ ] Habilitar Authorization server
+  - [ ] Configurar token (codificação, formato, assinatura)
+  - [ ] Configurar autenticação / password encoder
+  - [ ] Registrar aplicação cliente
+  
+
+- [ ] Resource server
+- [ ] Configurar controle de acesso aos recursos
+- [ ] Configurar CSRF, CORS
+- [ ] Configurar token
+- [ ] Liberar H2 Console no modo teste
