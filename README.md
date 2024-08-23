@@ -40,6 +40,12 @@
 [Melhorando Postman (importante)](#melhorando-postman)
 -
 
+[Controle de acesso (por perfil e por rota) - Postman](#controle-de-acesso-por-perfil-e-por-rota---postman)
+-
+
+[Controle de acesso (por perfil e por rota) - Backend](#controle-de-acesso-por-perfil-e-por-rota---backend)
+-
+
 <hr>
 
 
@@ -564,3 +570,21 @@ Usaremos uma anottation do Spring, passando perfil de usuário autorizado a aces
 No nosso Controller, iremos nos endpoints em pauta, veja:
 
 ![img_25.png](img_25.png)
+
+### Adicionando segurança ao DSCommerce
+
+Implementar tudo que foi estudado até aqui no nosso projeto (e está lá em cima).
+
+1. Implementar domínio User-Role;
+2. Dependência Maven;
+3. Checklist Spring Security
+   - [ ] GrantedAuthority
+   - [ ] UserDetails
+   - [ ] UserDetailsService
+   - [ ] UsernameNotFoundException
+4. Valores de configuração;
+5. Checklist OAuth2 JWT password grant
+   - [ ] Implementação customizada do password grant
+   - [ ] Authorization server
+   - [ ] Resource server
+6. Fazer o controle de acesso por perfil e rota
