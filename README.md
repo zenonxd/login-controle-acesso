@@ -37,6 +37,9 @@
 - [Checklist - password grant](#checklist-oauth2-jwt-password-grant-2)
 - [Requisição Login](#requisição-de-login)
 
+[Melhorando Postman (importante)](#melhorando-postman)
+-
+
 <hr>
 
 
@@ -476,3 +479,88 @@ No body do Postman, não teremos um tipo JSON e sim x-www-form-urlencoded, coloc
 Ao rodar a requisição, será gerado o token de acesso:
 
 ![img_17.png](img_17.png)
+
+
+### Melhorando Postman
+
+Faremos o seguinte:
+
+1. Criar ambiente
+
+Para fazer isso, é só clicar na parte superior lado direito (abaixo do X), e criar um novo ambiente, chamado por exemplo
+OAuth2 Aula.
+
+Dentro, podemos colocar algumas variáveis. Nosso host, por exemplo, possui sempre a mesma URL e podemos deixar isso
+default.
+
+O client-id, client-secret (as credenciais), username e passowrd também pode ser settada com um valor default.
+
+![img_18.png](img_18.png)
+
+Caso você queira testar novos valores, é só substituí-lo na parte de "currentvalue".
+
+2. Referenciar variáveis do ambiente
+
+A partir disso, ao invés de colocarmos nossos valores manuais no Postman (o que não deve ser feito em hipótese alguma),
+colocaremos as variáveis, veja:
+
+![img_19.png](img_19.png)
+
+![img_20.png](img_20.png)
+
+3. Incluir script para aba Tests da requisição de login:
+
+Na aba "Tests", do Postman, colocamos o script abaixo. Ele fará o seguinte: se a nossa requisição retornar um valor
+entre 200 e 300 (que deu certo), pegaremos o corpo da resposta, aplicar um parse no JSON e guardar na variável JSON.
+
+Acessaremos a variável json no atributo "acess_token", e salvaremos, através do "setEnviromentVariable" na variável
+de ambiente "token".
+
+```java
+if (responseCode.code >= 200 && responseCode.code < 300) {
+    var json = JSON.parse(responseBody);
+    postman.setEnvironmentVariable('token', json.access_token);
+}
+```
+
+### Controle de acesso (por perfil e por rota) - Postman
+
+No caso baixo:
+
+O allproducts pode ser acessado por todos (mesmo se tiver deslogado).
+
+O productById pode ser acessado por todos (mas precisa estar logado/autenticado)
+
+O new product só pode ser acessado se o usuário for admin.
+
+![img_21.png](img_21.png)
+
+Para realizar isso, precisamos passar um cabeçalho na requisição, veja:
+
+1. Na requisição de loguin, rodar ela e pegar o token gerado;
+
+![img_22.png](img_22.png)
+
+2. No get product por id (que precisa de autorização), colocar bearen tokene passar o token;
+
+![img_23.png](img_23.png)
+
+3. Na aba headers, o cabeçalho de authorization terá sido criado;
+
+![img_24.png](img_24.png)
+
+Ou seja, se você quer ter uma requisição protegida, precisa ter o bearer token + o token!
+
+### Controle de acesso (por perfil e por rota) - Backend
+
+Usaremos uma anottation do Spring, passando perfil de usuário autorizado a acessar cada um dos endpoints.
+
+```java
+@PreAuthorize("hasRole('ROLE_ADMIN')")
+
+@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
+```
+
+No nosso Controller, iremos nos endpoints em pauta, veja:
+
+![img_25.png](img_25.png)
