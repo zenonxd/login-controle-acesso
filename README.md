@@ -592,14 +592,131 @@ Implementar tudo que foi estudado até aqui no nosso projeto (e está lá em cim
 
 Obtendo informações do usuário que está logado.
 
+Passo um
+-
+
+Iremos ao UserRepository e criar um método para encontrar um User. Usaremos os query methods da JPA mesmo.
+```java
+    //interassante colocar em Optional, pois caso o User não exista
+    //ele volta um Optional vazio.
+    Optional<User> findByEmail(String email);
+```
+
 No UserService, criaremos um método para isso. Ele será protected, só será possível chamá-lo nas classes de service.
 
 Essa função irá retornar um User.
 
+Voltando para o método do UserService o parâmetro usado dentro da chamada do repository será advindo dos códigos abaixo.
+
 ```java
+//pega um objeto do Aipo authentication dentro do Spring Security. Ou seja, se tem um cara autenticado ele pega.
 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+//pegando o user autenticado (dentro de authentication) faremos o casting para JWT, e usaremos o getPrincipal.
 Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
 
-
+//o getPrincipal por sua vez, possui os claims (onde foi configurado dentro do pacote config). A partir disso,
+//podemos recuperar o seu username (email)
 String username = jwtPrincipal.getClaim("username");
 ```
+
+E se o User estiver vazio? E se não tiver logado? Se der alguma exceção? Faremos um try!
+
+Método:
+```java
+    protected User authenticate() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
+            String username = jwtPrincipal.getClaim("username");
+
+
+            return userRepository.findByEmail(username).get();
+        }
+        catch (Exception e) {
+            throw new UsernameNotFoundException("User not found");
+        }
+
+    }
+```
+<hr>
+
+Passo dois
+-
+
+Inicialmente, criaremos no Postman uma pasta User dentro da Collection.
+
+A pasta terá um GET denominada User Logged.
+
+Seu URL será o local host de sempre com "/users/me". Não terá body.
+
+Como ela retornará um objeto contendo os dados do usuário, criaremos um DTO.
+
+Passo três
+-
+
+Criar um UserDto. Nele teremos tudo que o User possui, menos a password.
+
+Além disso, não teremos um Set de roles e sim uma Lista de Strings chamada Role. Não faz sentido passarmos o objeto se 
+só queremos a String como retorno.
+
+Criar um construtor para passar de Entity User para DTO, como já vimos previamente.
+
+Para adicionar as roles na nossa Lista de Strings, dentro do construtor faremos um "for", chamando GrantedAuthority, veja:
+```java
+    public UserDto(User entity) {
+        id = entity.getId();
+        name = entity.getName();
+        email = entity.getEmail();
+        phone = entity.getPhone();
+        birthDate = entity.getBirthDate();
+        for (GrantedAuthority role : entity.getAuthorities()) {
+            roles.add(role.getAuthority());
+        }
+    }
+```
+
+Depois, inserir os gets.
+
+Passo quatro
+-
+
+Voltar ao service e criar nosso método para usar o DTO.
+
+```java
+    @Transactional(readOnly = true)
+    public UserDto getMe() {
+        //pegando o usuário autenticado (logado) criado acima
+        User user = authenticate();
+        return new UserDto(user);
+    }
+```
+
+Passo cinco
+-
+
+Criando endpoint no Controller.
+
+Criar um UserController e fazer as alterações.
+
+```java
+@RestController
+@RequestMapping(value = "/users")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+    
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+    @GetMapping(value = "/{me}")
+    public ResponseEntity<UserDto> getMe() {
+        UserDto dto = userService.getMe();
+        return ResponseEntity.ok(dto);
+    }
+}
+```
+
+Após isso lembrar de que para testar o método, precisa primeiro logar para autenticar o token.
+Depois, ao rodar a requisição criada, será possível visualizar:
+
+![img_26.png](img_26.png)
