@@ -587,3 +587,19 @@ Implementar tudo que foi estudado até aqui no nosso projeto (e está lá em cim
    - [ ] Authorization server
    - [ ] Resource server
 6. Fazer o controle de acesso por perfil e rota
+
+## Endpoint usuário logado
+
+Obtendo informações do usuário que está logado.
+
+No UserService, criaremos um método para isso. Ele será protected, só será possível chamá-lo nas classes de service.
+
+Essa função irá retornar um User.
+
+```java
+Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
+
+
+String username = jwtPrincipal.getClaim("username");
+```
