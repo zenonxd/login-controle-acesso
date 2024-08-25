@@ -2,7 +2,6 @@
   <img src="https://img.shields.io/static/v1?label=SpringProfessional - Dev Superior&message=Login e Controle de Acesso&color=8257E5&labelColor=000000" alt="Testes automatizados na prática com Spring Boot" />
 </p>
 
-
 # Tópicos
 
 - [Ideia geral de login e controle de acesso](#ideia-geral-de-login-e-controle-de-acesso)
