@@ -720,3 +720,16 @@ Após isso lembrar de que para testar o método, precisa primeiro logar para aut
 Depois, ao rodar a requisição criada, será possível visualizar:
 
 ![img_26.png](img_26.png)
+
+## Consultar catálogo ProductMinDTO
+
+![img_27.png](img_27.png)
+
+Basicamente, criar um ProductMinDTO com os dados necessários: nome, imagme, preço.
+
+Lembrar de também, colocar o ID para ser identificado ao mostrar a lista.
+
+Criar o construtor (inclusive o de conversão de Product para DTO).
+
+E fazer a alteração no método do service e controller. Ao invés de retornar um ProductDto, vai ser um ProductMinDTO.
+
