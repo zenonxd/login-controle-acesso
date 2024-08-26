@@ -52,6 +52,9 @@
 
 [CRUD (Inserindo e deletando categoria)](#crud-inserindo-e-deletando-categoria)
 
+[Incluir e remover itens do carrinho de compras, bem como alterar as quantidades do produto em cada item](#incluir-e-remover-itens-do-carrinho-de-compras-bem-como-alterar-as-quantidades-do-produto-em-cada-item)
+
+
 <hr>
 
 
@@ -776,3 +779,79 @@ settando o seu ID, lembrando que este ID, é o de cima (passado no postman), vej
 
 ❗Lembrar de antes do for loop, usar um ``entity.getCategories().clear();``, para limpar a lista e inserir o desejado.
 
+## Incluir e remover itens do carrinho de compras, bem como alterar as quantidades do produto em cada item
+
+![img_33.png](img_33.png)
+
+![img_34.png](img_34.png)
+
+O JSON abaixo possui tudo que é necessário (as informações complementares acima) e algumas a mais.
+
+```json
+{
+  "id": 1,
+  "moment": "2022-07-25T13:00:00Z",
+  "status": "PAID",
+  "client": {
+    "id": 1,
+    "name": "Maria Brown"
+  },
+  "payment": {
+    "id": 1,
+    "moment": "2022-07-25T15:00:00Z"
+  },
+  "items": [
+    {
+      "productId": 1,
+      "name": "The Lord of the Rings",
+      "price": 90.5,
+      "quantity": 2,
+      "subTotal": 181.0
+    },
+    {
+      "productId": 3,
+      "name": "Macbook Pro",
+      "price": 1250.0,
+      "quantity": 1,
+      "subTotal": 1250.0
+    }
+  ],
+  "total": 1431.0
+}
+```
+Vamos criar alguns DTO's para representar esse JSON, é só seguir o que está no JSON: 
+
+❗Lembrar de colocar a conversão de Entity para DTO.
+
+1. ClientDTO (id, name)
+
+2. PaymentDTO(id, instant)
+
+3. OrderItemDto (para o campo "items" do JSON (lembrar que pode acessar o Product))
+
+4. OrderDto (contendo os 3 dados iniciais do JSON, id, moment, status). Ou seja, esse OrderDto, irá conter todos os 
+outros Dtos acima criado nele:
+
+![img_35.png](img_35.png)
+
+O Construtor de conversão será diferente. Para converter o Client e Payment, entraremos no DTO para pegar o da entidade:
+
+![img_38.png](img_38.png)
+
+Como o payment pode ser nulo, fazemos esse ternário acima.
+
+Para pegar aquele total final do JSON:
+
+![img_37.png](img_37.png)
+
+### Encontrando Order por ID
+
+Criar OrderController, OrderService, OrderRepository.
+
+Crias as classes e alterar o retorno para OrderDTO.
+
+Resultado Postman:
+
+![img_39.png](img_39.png)
+
+![img_40.png](img_40.png)
