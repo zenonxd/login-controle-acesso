@@ -37,13 +37,20 @@
 - [Requisição Login](#requisição-de-login)
 
 [Melhorando Postman (importante)](#melhorando-postman)
--
+
 
 [Controle de acesso (por perfil e por rota) - Postman](#controle-de-acesso-por-perfil-e-por-rota---postman)
--
+
 
 [Controle de acesso (por perfil e por rota) - Backend](#controle-de-acesso-por-perfil-e-por-rota---backend)
--
+
+
+[Obtendo informações do usuário que está logado](#endpoint-usuário-logado)
+
+
+[Listar produto disponível, podendo filtrar por nome](#listar-produto-disponível-podendo-filtrar-por-nome)
+
+[CRUD (Inserindo e deletando categoria)](#crud-inserindo-e-deletando-categoria)
 
 <hr>
 
@@ -721,15 +728,51 @@ Depois, ao rodar a requisição criada, será possível visualizar:
 
 ![img_26.png](img_26.png)
 
-## Consultar catálogo ProductMinDTO
+## Listar produto disponível, podendo filtrar por nome
 
 ![img_27.png](img_27.png)
 
-Basicamente, criar um ProductMinDTO com os dados necessários: nome, imagme, preço.
+Basicamente, criar um ProductMinDTO com os dados necessários: nome, imagem e preço.
 
 Lembrar de também, colocar o ID para ser identificado ao mostrar a lista.
 
 Criar o construtor (inclusive o de conversão de Product para DTO).
 
 E fazer a alteração no método do service e controller. Ao invés de retornar um ProductDto, vai ser um ProductMinDTO.
+
+## CRUD (Inserindo e deletando categoria)
+
+![img_28.png](img_28.png)
+
+![img_32.png](img_32.png)
+
+Como nosso ProductDto não possui uma Lista de categorias em sua entidade, iremos introduzir.
+
+Criar uma CategoryDTO com name e description, construtor + construtor para converter de Category para DTO.
+
+No ProductDto, introduzir uma Lista de categoryDTO + get.
+
+No construtor de conversão de Product para DTO, iremos fazer um for padrão, para percorrer as Categories do Product
+e inserir na nossa do DTO.
+
+![img_29.png](img_29.png)
+
+### Alterando requisição Postman (insert, put, delete)
+
+Criaremos no body (raw), um novo campo, passando uma lista de categorias a ser inserida no produto.
+
+![img_30.png](img_30.png)
+
+Colocar no Post, Put e Delete.
+
+### No service
+
+Lembra daquela função lá embaixo do Service de copyDtoToEntity?
+
+Bom, nós iremos fazer uma varredura no CategoryDto (acessando pelo ProductDto), e instanciar uma nova categoria
+settando o seu ID, lembrando que este ID, é o de cima (passado no postman), veja:
+
+![img_31.png](img_31.png)
+
+❗Lembrar de antes do for loop, usar um ``entity.getCategories().clear();``, para limpar a lista e inserir o desejado.
 
