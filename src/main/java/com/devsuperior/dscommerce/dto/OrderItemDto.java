@@ -3,6 +3,7 @@ package com.devsuperior.dscommerce.dto;
 import com.devsuperior.dscommerce.entities.OrderItem;
 
 public class OrderItemDto {
+
     private Long productId;
     private String name;
     private Double price;
@@ -42,7 +43,7 @@ public class OrderItemDto {
     }
 
     public Double getSubTotal() {
-        return price * quantity;
+        return quantity * price;
     }
 
     public String getImgUrl() {

@@ -69,14 +69,13 @@ public class OrderService {
             //Instanciando um OrderItem e usando o seu construtor, passando o order ali de cima, o Product
             // e a quantidade e preço retirada do itemDto.
             //Assim, associamos o item com Order e Product.
-            OrderItem item = new OrderItem(order, product, itemDto.getQuantity(), itemDto.getPrice());
+            OrderItem item = new OrderItem(order, product, itemDto.getQuantity(), product.getPrice());
 
             //associando por fim, o OrderItem ao Order lá de cima.
             order.getItems().add(item);
         }
         orderRepository.save(order);
         orderItemRepository.saveAll(order.getItems());
-
         return new OrderDto(order);
     }
 
