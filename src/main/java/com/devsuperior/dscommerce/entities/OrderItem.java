@@ -16,7 +16,9 @@ public class OrderItem {
     private Integer quantity;
     private Double price;
 
-    public OrderItem() {}
+    public OrderItem() {
+
+    }
 
     public OrderItem(Order order, Product product, Integer quantity, Double price) {
         id.setOrder(order);
@@ -41,7 +43,6 @@ public class OrderItem {
         id.setProduct(product);
     }
 
-
     public Integer getQuantity() {
         return quantity;
     }
@@ -59,15 +60,17 @@ public class OrderItem {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof OrderItem orderItem)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OrderItem orderItem = (OrderItem) o;
 
         return Objects.equals(id, orderItem.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return id != null ? id.hashCode() : 0;
     }
 }

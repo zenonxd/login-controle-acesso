@@ -733,6 +733,8 @@ Depois, ao rodar a requisição criada, será possível visualizar:
 
 ## Listar produto disponível, podendo filtrar por nome
 
+Inicialmente, esse consulta já existia. A diferença é que ela voltava também a descrição do Product e não é o que queremos.
+
 ![img_27.png](img_27.png)
 
 Basicamente, criar um ProductMinDTO com os dados necessários: nome, imagem e preço.
@@ -743,6 +745,10 @@ Criar o construtor (inclusive o de conversão de Product para DTO).
 
 E fazer a alteração no método do service e controller. Ao invés de retornar um ProductDto, vai ser um ProductMinDTO.
 
+Assim, ao fazer a consulta no Postman, só sera retornado: ID, name, price e imgUrl
+
+![img_41.png](img_41.png)
+
 ## CRUD (Inserindo e deletando categoria)
 
 ![img_28.png](img_28.png)
@@ -751,9 +757,9 @@ E fazer a alteração no método do service e controller. Ao invés de retornar 
 
 Como nosso ProductDto não possui uma Lista de categorias em sua entidade, iremos introduzir.
 
-Criar uma CategoryDTO com name e description, construtor + construtor para converter de Category para DTO.
+Criar uma CategoryDTO com name e description, construtor + o construtor para converter de Category para DTO. 
 
-No ProductDto, introduzir uma Lista de categoryDTO + get.
+No ProductDto, introduzir uma Lista de categoryDTO + get. (@NotEmpty)
 
 No construtor de conversão de Product para DTO, iremos fazer um for padrão, para percorrer as Categories do Product
 e inserir na nossa do DTO.
@@ -778,6 +784,9 @@ settando o seu ID, lembrando que este ID, é o de cima (passado no postman), vej
 ![img_31.png](img_31.png)
 
 ❗Lembrar de antes do for loop, usar um ``entity.getCategories().clear();``, para limpar a lista e inserir o desejado.
+
+A partir disso, rodando um put, insert ou delete, ele irá deletar a categoria já existente e inserir por uma nova, por
+exemplo.
 
 ## Incluir e remover itens do carrinho de compras, bem como alterar as quantidades do produto em cada item
 
@@ -844,14 +853,45 @@ Para pegar aquele total final do JSON:
 
 ![img_37.png](img_37.png)
 
-### Encontrando Order por ID
+### Encontrando Order (Pedido) por ID
 
 Criar OrderController, OrderService, OrderRepository.
 
-Crias as classes e alterar o retorno para OrderDTO.
+Crias as classes e alterar o retorno do método de findByID para OrderDTO.
 
 Resultado Postman:
 
 ![img_39.png](img_39.png)
 
 ![img_40.png](img_40.png)
+
+### Registrando - Salvando Order (pedido)
+
+![img_42.png](img_42.png)
+
+Para salvar esse pedido só precisamos passar um simples JSON, dizendo o seu ID e quantidade.
+
+```json
+{
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 2
+    },
+    {
+      "productId": 5,
+      "quantity": 1
+    }
+  ]
+}
+```
+
+Não precisamos criar um novo DTO, pois o OrderDto criado já contempla esse "items" dentro dele.
+
+Faremos o seguinte:
+
+No OrderController, criar o método de Post, exatamente igual ao do ProductController:
+
+![img_43.png](img_43.png)
+
+No OrderService será um pouco mais complexo:

@@ -20,6 +20,7 @@ public class ProductDto {
     @NotBlank(message = "Campo requerido")
     private String description;
 
+    @NotNull(message = "Campo requerido")
     @Positive(message = "O preço deve ser positivo")
     private Double price;
 
@@ -27,24 +28,6 @@ public class ProductDto {
 
     @NotEmpty(message = "Deve ter pelo menos uma categoria")
     private List<CategoryDTO> categories = new ArrayList<>();
-
-    public ProductDto(Product entity) {
-        id = entity.getId();
-        name = entity.getName();
-        description = entity.getDescription();
-        price = entity.getPrice();
-        imgUrl = entity.getImgUrl();
-        for (Category c : entity.getCategories()) {
-            categories.add(new CategoryDTO(c));
-        }
-    }
-
-    public ProductDto(ProductDto productDto) {
-        name = productDto.getName();
-        description = productDto.getDescription();
-        price = productDto.getPrice();
-        imgUrl = productDto.getImgUrl();
-    }
 
     public ProductDto(Long id, String name, String description, Double price, String imgUrl) {
         this.id = id;
@@ -54,9 +37,17 @@ public class ProductDto {
         this.imgUrl = imgUrl;
     }
 
-    public List<CategoryDTO> getCategories() {
-        return categories;
+    public ProductDto(Product entity) {
+        id = entity.getId();
+        name = entity.getName();
+        description = entity.getDescription();
+        price = entity.getPrice();
+        imgUrl = entity.getImgUrl();
+        for (Category cat : entity.getCategories()) {
+            categories.add(new CategoryDTO(cat));
+        }
     }
+
 
     public Long getId() {
         return id;
@@ -76,5 +67,9 @@ public class ProductDto {
 
     public String getImgUrl() {
         return imgUrl;
+    }
+
+    public List<CategoryDTO> getCategories() {
+        return categories;
     }
 }
