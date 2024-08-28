@@ -897,3 +897,37 @@ No OrderController, criar o método de Post, exatamente igual ao do ProductContr
 No OrderService será um pouco mais complexo:
 
 ![img_44.png](img_44.png)
+
+## Controle de acesso self ou admin
+
+Mesmo o usuário não sendo Admin, ele pode acessar o SEU próprio pedido. Pra isso vamos fazer o seguinte:
+
+O método de findById do service precisa ter uma lógica: se a pessoa que está acessando não for admin e nem a dona desse
+pedido (que é o parametro ID do método), temos que lançar um 403.
+
+Criaremos uma "ForbiddenExcception" no pacote Exceptions do Service.
+
+Lembra do nosso ControllerHandler? Faremos o tratamento dela lá! Veja:
+
+![img_45.png](img_45.png)
+
+Agora, criaremos uma classe chamada AuthService. Nela, implementaremos alguma regras de negócio referente a controle
+de acesso, veja:
+
+![img_46.png](img_46.png)
+
+E por fim, no método do Service, injetaremos a classe criada acima:
+
+![img_47.png](img_47.png)
+
+## Endpoint para buscar categoria dos produtos
+
+Criar um CategoryRepository.
+
+Criar Service pra retornar todas as categorias do banco.
+
+![img_48.png](img_48.png)
+
+CategoryController:
+
+![img_49.png](img_49.png)

@@ -27,6 +27,9 @@ public class OrderService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AuthService authService;
+
     //como o service devolve um DTO para o controller,
     //a função retornará um DTO
     @Transactional(readOnly = true)
@@ -36,6 +39,10 @@ public class OrderService {
         Order order = orderRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Recurso não encontrado."));
 
+        //pegando o cliente associado ao pedido
+        //se a condição do método passar, ele vai retornar o DTO ali embaixo
+        //se não, dará a exception Forbidden
+        authService.validateSelfOrAdmin(order.getClient().getId());
 
         //lembrar que no DTO foi criado um construtor
         //específico para receber um Product
