@@ -920,7 +920,9 @@ E por fim, no método do Service, injetaremos a classe criada acima:
 
 ![img_47.png](img_47.png)
 
-## Endpoint para buscar categoria dos produtos
+## GET categories
+
+Endpoint para buscar categoria dos produtos
 
 Criar um CategoryRepository.
 
@@ -931,3 +933,7 @@ Criar Service pra retornar todas as categorias do banco.
 CategoryController:
 
 ![img_49.png](img_49.png)
+
+## Ajuste validação de dados
+
+![img_50.png](img_50.png)
