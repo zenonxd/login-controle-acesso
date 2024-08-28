@@ -54,6 +54,15 @@
 
 [Incluir e remover itens do carrinho de compras, bem como alterar as quantidades do produto em cada item](#incluir-e-remover-itens-do-carrinho-de-compras-bem-como-alterar-as-quantidades-do-produto-em-cada-item)
 
+[Encontrando pedido por ID](#encontrando-order-pedido-por-id)
+
+[Salvando order](#registrando---salvando-order-pedido)
+
+[Controle de acesso, usuário vendo seu pedido](#controle-de-acesso-self-ou-admin)
+
+[Get Categories](#get-categories)
+
+[Ajustes, validação de dados](#ajuste-validação-de-dados)
 
 <hr>
 
